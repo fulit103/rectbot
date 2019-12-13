@@ -1,12 +1,19 @@
 {
   "name": "chatbotcourse",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "React bot for webpage",
+  "main": "src/index.js",
+  "engines": {
+    "node": "v10.16.3",
+    "npm": "6.13.1"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "author": "Julian Toro",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
 }
