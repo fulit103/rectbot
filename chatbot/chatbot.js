@@ -4,7 +4,14 @@ const dialogflow = require('dialogflow');
 const config = require('../config/keys');
 const structjson = require('structjson');
 
-const sessionClient = new dialogflow.SessionsClient();
+const projectID = config.googleProjectId;
+
+const credentials = {
+  client_email: config.googleClientEmail,
+  private_key: config.googlePrivateKey
+}
+
+const sessionClient = new dialogflow.SessionsClient({projectID: projectID, credentials: credentials});
 
 const sessionPath = sessionClient.sessionPath(config.googleProjectId, config.dialogFlowSessionId);
 
