@@ -4,7 +4,7 @@ const dialogflow = require('dialogflow');
 const config = require('../config/keys');
 const structjson = require('structjson');
 
-const projectID = config.googleProjectId;
+const projectID = config.googleProjectID;
 
 const credentials = {
   client_email: config.googleClientEmail,
@@ -13,7 +13,7 @@ const credentials = {
 
 const sessionClient = new dialogflow.SessionsClient({projectID: projectID, credentials: credentials});
 
-const sessionPath = sessionClient.sessionPath(config.googleProjectId, config.dialogFlowSessionId);
+const sessionPath = sessionClient.sessionPath(config.googleProjectID, config.dialogFlowSessionId);
 
 module.exports = {
   textQuery: async function (text, parameters = {}){
