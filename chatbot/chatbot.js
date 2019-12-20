@@ -13,11 +13,10 @@ const credentials = {
 
 const sessionClient = new dialogflow.SessionsClient({projectID: projectID, credentials: credentials});
 
-const sessionPath = sessionClient.sessionPath(config.googleProjectID, config.dialogFlowSessionID);
-
 module.exports = {
-  textQuery: async function (text, parameters = {}){
-    let self = module.exports;
+  textQuery: async function (text, userID, parameters = {}){
+    let sessionPath = sessionClient.sessionPath(config.googleProjectID, config.dialogFlowSessionID + userID)
+    let self = module.exports;   
     const request = {
       session: sessionPath,
       queryInput: {
@@ -38,7 +37,8 @@ module.exports = {
     return responses;
   },
 
-  eventQuery: async function (event, parameters = {}){
+  eventQuery: async function (event, userID, parameters = {}){
+    let sessionPath = sessionClient.sessionPath(config.googleProjectID, config.dialogFlowSessionID + userID)
     let self = module.exports;
     const request = {
       session: sessionPath,
