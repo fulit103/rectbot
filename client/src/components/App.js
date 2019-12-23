@@ -9,15 +9,12 @@ import Chatbot from './chatbot/Chatbot';
 
 const App = (props) => {
 
-  const redirect = () => {
-    console.log("window: " + window.location.pathname);
+  const render = () => {
     if ( window.location.pathname == '/chatbot' ) {
-      console.log("chatbot");
       return (
-        <Chatbot styles={{width: '100%'}} />
+        <Chatbot styles={{width: '100%'}} full={true} />
       )
     } else {
-      console.log("original");
       return (
         <div>
           <BrowserRouter>
@@ -26,7 +23,7 @@ const App = (props) => {
               <Route exact path="/" component={Landing}/>
               <Route exact path="/about" component={About}/>
               <Route exact path="/shop" component={Shop}/>
-              <Chatbot styles={{ height:500, width: 400, marginRight:10,position: 'absolute', bottom: 0, right:0, border:'1px solid lightgrey' }} />          
+              <Chatbot styles={{ height:500, width: 400, marginRight:10,position: 'absolute', bottom: 0, right:0, border:'1px solid lightgrey' }} full={false} />          
             </div>
           </BrowserRouter>
         </div>
@@ -36,7 +33,7 @@ const App = (props) => {
 
   return (
     <>
-      {redirect()}
+      {render()}
     </>
   );
 };

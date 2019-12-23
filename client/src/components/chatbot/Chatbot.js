@@ -4,6 +4,8 @@ import Message from './Message';
 import Cookies from 'universal-cookie';
 import { v4 as uuid } from 'uuid';
 import Card from './Card';
+import QuickReplies from './QuickReplies';
+
 
 const cookies = new Cookies();
 
@@ -15,8 +17,12 @@ class Chatbot extends Component {
   constructor(props) {
     super(props);
     this._handleInputKeyPress = this._handleInputKeyPress.bind(this);
+    this._handleQuickReplyPayload = this._handleQuickReplyPayload.bind(this);
+    this._clickHandlerShowChatbot = this._clickHandlerShowChatbot.bind(this);
     this.state = {
-      messages: []
+      messages: [],
+      showChatBot: true,
+      height: 500,
     }
     if (cookies.get('userID') === undefined) {
       cookies.set('userID', uuid(), { path: '/' })
@@ -63,7 +69,9 @@ class Chatbot extends Component {
   }
 
   componentDidUpdate() {
-    this.messagesEnd.scrollIntoView({behavior: "smooth"})
+    if (this.state.showChatBot) {
+      this.messagesEnd.scrollIntoView({behavior: "smooth"})
+    }
   }
 
   _handleInputKeyPress(e) {
@@ -71,6 +79,30 @@ class Chatbot extends Component {
       this.df_text_query(e.target.value);
       e.target.value = '';
     }
+  }
+
+  _handleQuickReplyPayload(event, payload, text) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    switch (payload) {
+      case 'training_masterclass':
+        this.df_event_query('MASTERCLASS');
+        break;
+      default:
+        this.df_text_query(text);
+        break;
+    } 
+  }
+
+  _clickHandlerShowChatbot(event) {
+    event.preventDefault();
+
+    this.setState({
+      ...this.state, 
+      showChatBot: !this.state.showChatBot, 
+      height:!this.state.showChatBot ? 500:100
+    })
   }
 
   renderCards(cards) {
@@ -101,6 +133,21 @@ class Chatbot extends Component {
           </div>          
         </div>
       );
+    } else if (
+      message.msg &&
+      message.msg.payload &&
+      message.msg.payload.fields &&
+      message.msg.payload.fields.quick_replies 
+    ) {
+      return (
+        <QuickReplies 
+          text={message.msg.payload.fields.text ? message.msg.payload.fields.text : null}
+          key={i}
+          replyClick={this._handleQuickReplyPayload}
+          speaks={message.speaks}
+          payload={message.msg.payload.fields.quick_replies.listValue.values}
+        />
+      )
     }
   }
 
@@ -116,23 +163,31 @@ class Chatbot extends Component {
   
   render() {
     return (
-      <div style={this.props.styles}>
+      <div style={{...this.props.styles, height:this.state.height}}>
+        {!this.state.showChatBot && this.props.full && 
+          <div id='chatbot' style={{ height:438, width:'100%', overflow:'auto'}}> 
+          </div>
+        }
         <nav>
-          <div className='nav-wrapper' style={{paddingLeft:10}}>
+          <div className='nav-wrapper' style={{paddingLeft:10, cursor: "pointer"}} onClick={this._clickHandlerShowChatbot} >
             <a className='brand-logo'>ChatBot</a>
           </div>
         </nav>
-        <div id='chatbot' style={{ height:388, width:'100%', overflow:'auto'}}>          
-          {this.renderMessages(this.state.messages)}
-          <div style={{ float: 'left', clear:'both' }} ref={(el) => {this.messagesEnd = el}}></div>
-          
-        </div>        
-        <div className='col s12'>
-          <input type='text' onKeyPress={this._handleInputKeyPress} ref={(el) => {this.inputText = el}} 
-            style={{margin:0, paddingLeft: '1%', paddingRight: '1%', width: '98%'}} 
-            placeholder='Escribe un mensaje'
-          />
-        </div>
+        {this.state.showChatBot && 
+          <>
+            <div id='chatbot' style={{ height:388, width:'100%', overflow:'auto'}}>          
+              {this.renderMessages(this.state.messages)}
+              <div style={{ float: 'left', clear:'both' }} ref={(el) => {this.messagesEnd = el}}></div>
+              
+            </div>        
+            <div className='col s12'>
+              <input type='text' onKeyPress={this._handleInputKeyPress} ref={(el) => {this.inputText = el}} 
+                style={{margin:0, paddingLeft: '1%', paddingRight: '1%', width: '98%'}} 
+                placeholder='Escribe un mensaje'
+              />
+            </div>
+          </>
+        }
       </div>      
     );
   }
