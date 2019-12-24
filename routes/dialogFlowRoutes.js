@@ -2,10 +2,10 @@ const chatbot = require('../chatbot/chatbot');
 
 module.exports = app => {
 
-  app.get('/', (req, res) => {
+  /*app.get('/', (req, res) => {
     //res.send({'hello': 'jonny'});
     res.sendFile('/Volumes/juliantoro/desarrollo/chatbotcourse/index.html');
-  })
+  })*/
 
   app.post('/api/df_text_query', async (req, res) => {
     try{      
