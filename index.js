@@ -5,8 +5,10 @@ const app = express();
 app.use(bodyParser.json());
 
 const routes = require('./routes/dialogFlowRoutes')
+const routesFulfillment = require('./routes/fulfillmentRoutes');
 
 routes(app);
+routesFulfillment(app);
 
 if (process.env.NODE_ENV === 'production'){
   app.use(express.static('client/build'));
