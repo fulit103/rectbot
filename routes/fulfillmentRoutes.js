@@ -1,6 +1,7 @@
 const {WebhookClient} = require('dialogflow-fulfillment');
 const dateFormat = require('dateformat');
 const MysqlConnect = require('../mysqlclient/mysqlclient');
+const currencyFormatter = require('currency-formatter');
 
 module.exports = app => {
   app.post('/fulfillment', async (req, res) => {
@@ -24,8 +25,9 @@ module.exports = app => {
         
         const ventas = new MysqlConnect();
         const ts_hms = dateFormat( new Date(req.body.queryResult.parameters.date), "yyyy-mm-dd");
+        const [noServicios, valorServicios] = await ventas.getVentasByFecha(req.body.queryResult.parameters.date);
 
-        agent.add(`Realizamos ${await ventas.getVentasByFecha(req.body.queryResult.parameters.date)} servicios en esta fecha: ${ts_hms}` );
+        agent.add(`Realizamos ${noServicios} servicios por un valor de ${currencyFormatter.format(valorServicios, { code: 'USD' })} en esta fecha: ${ts_hms}` );
         
       }
       else if (
@@ -33,7 +35,12 @@ module.exports = app => {
         req.body.queryResult.parameters &&
         req.body.queryResult.parameters["date-period"] != ""
       ){
-        agent.add('Realizamos tantos servicios periodo');
+        const ventas = new MysqlConnect();
+        let {startDate, endDate} = req.body.queryResult.parameters["date-period"] 
+        const [noServicos,valorServicios] = await ventas.getVentasByRangoFecha(startDate,endDate);
+        startDate = dateFormat( new Date(startDate), "yyyy-mm-dd")
+        endDate = dateFormat( new Date(endDate), "yyyy-mm-dd")
+        agent.add(`Realizamos ${noServicos} servicios por un valor de ${currencyFormatter.format(valorServicios, { code: 'USD' })} entre ${startDate} y ${endDate}`);
       }
       else {
         agent.add('Realizamos tantos servicios ');
