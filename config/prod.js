@@ -6,7 +6,7 @@ module.exports = {
   googlePrivateKey: process.env.GOOGLE_PRIVATE_KEY,
 
   mysqlHost: process.env.MYSQL_HOST,
-  mysqlUser: process.MYSQL_USER,
+  mysqlUser: process.env.MYSQL_USER,
   mysqlPassword: process.env.MYSQL_PASSWORD,
   mysqlDatabase: process.env.MYSQL_DATABASE
 };
